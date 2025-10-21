@@ -1,0 +1,1736 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manchester Encoding - Interactive Experience</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --dark-gradient: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            --neon-blue: #00d4ff;
+            --neon-pink: #ff006e;
+            --neon-green: #8ac926;
+            --neon-purple: #a855f7;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #0a0a0a;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .shape {
+            position: absolute;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 20s infinite linear;
+        }
+
+        .shape:nth-child(1) { width: 80px; height: 80px; left: 10%; animation-delay: 0s; }
+        .shape:nth-child(2) { width: 120px; height: 120px; left: 20%; animation-delay: -5s; }
+        .shape:nth-child(3) { width: 60px; height: 60px; left: 70%; animation-delay: -10s; }
+        .shape:nth-child(4) { width: 100px; height: 100px; left: 80%; animation-delay: -15s; }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+
+        /* Header avec effet glassmorphism */
+        header {
+            position: relative;
+            text-align: center;
+            padding: 80px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 20px;
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            font-size: 4.5em;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 20px var(--neon-blue)); }
+            to { filter: drop-shadow(0 0 30px var(--neon-pink)); }
+        }
+
+        .subtitle {
+            font-size: 1.4em;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 30px;
+        }
+
+        /* Navigation avec effet morphing */
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            margin: 40px 20px;
+            position: relative;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 10px;
+            gap: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: transparent;
+            color: rgba(255, 255, 255, 0.7);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-gradient);
+            transition: left 0.4s ease;
+            z-index: -1;
+        }
+
+        .tab-btn:hover::before,
+        .tab-btn.active::before {
+            left: 0;
+        }
+
+        .tab-btn:hover,
+        .tab-btn.active {
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Conteneur principal */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Sections de contenu avec animations */
+        .content-section {
+            display: none;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 50px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            font-size: 2.8em;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, var(--neon-green), var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
+
+        h3 {
+            font-size: 1.8em;
+            color: var(--neon-pink);
+            margin: 30px 0 15px;
+        }
+
+        /* Simulateur interactif ULTRA */
+        .simulator-container {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 30px 0;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            box-shadow: 0 0 50px rgba(0, 212, 255, 0.2);
+        }
+
+        .input-section {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        label {
+            color: var(--neon-blue);
+            font-weight: 600;
+        }
+
+        input[type="text"], input[type="range"], select {
+            padding: 15px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        select option {
+            background: #1a1a1a;
+            color: white;
+        }
+
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .encode-btn, .demo-btn {
+            background: var(--primary-gradient);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .encode-btn:hover, .demo-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+        }
+
+        /* Canvas pour les visualisations */
+        .visualization-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .wave-canvas {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+            width: 100%;
+        }
+
+        /* Cartes d'informations avec hover effects */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--secondary-gradient);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: -1;
+        }
+
+        .info-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .info-card:hover::before {
+            opacity: 0.1;
+        }
+
+        .card-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        /* Tableau comparatif stylé */
+        .comparison-table {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 30px 0;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .comparison-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 20px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .comparison-table th {
+            background: var(--primary-gradient);
+            color: white;
+            font-weight: 700;
+        }
+
+        .comparison-table tr:hover {
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        /* Timeline interactive */
+        .timeline {
+            position: relative;
+            margin: 50px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--primary-gradient);
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            margin: 40px 0;
+            position: relative;
+        }
+
+        .timeline-content {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 25px;
+            width: 45%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content {
+            margin-left: auto;
+        }
+
+        .timeline-content:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            background: var(--neon-pink);
+            border-radius: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 20px var(--neon-pink);
+        }
+
+        /* Applications showcase */
+        .applications-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .app-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .app-card:hover::after {
+            left: 100%;
+        }
+
+        .app-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .app-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        /* Code display avec syntax highlighting simulation */
+        .code-display {
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            border-left: 4px solid var(--neon-green);
+            font-family: 'Courier New', monospace;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        .code-display::before {
+            content: 'CODE';
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: var(--neon-green);
+            color: black;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5em; }
+            .visualization-area { grid-template-columns: 1fr; }
+            .info-grid { grid-template-columns: 1fr; }
+            .nav-tabs { flex-direction: column; width: 100%; }
+            .tab-btn { width: 100%; }
+            .timeline::before { left: 20px; }
+            .timeline-content { width: calc(100% - 50px); margin-left: 40px !important; }
+            .content-section { padding: 25px; }
+        }
+
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+        }
+
+        .scroll-progress {
+            height: 100%;
+            background: var(--primary-gradient);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Particules flottantes - CORRIGÉ */
+        .particle {
+            position: fixed;
+            background: var(--neon-blue);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.6;
+            animation: particle-float 8s infinite ease-in-out;
+            z-index: -1;
+        }
+
+        @keyframes particle-float {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-20px) scale(1.1); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Indicateur de scroll -->
+    <div class="scroll-indicator">
+        <div class="scroll-progress" id="scrollProgress"></div>
+    </div>
+
+    <!-- Animation de fond -->
+    <div class="bg-animation">
+        <div class="floating-shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <h1>MANCHESTER ENCODING</h1>
+        <p class="subtitle">Une Exploration Interactive du Codage Numérique Révolutionnaire</p>
+    </header>
+
+    <!-- Navigation -->
+    <div class="nav-container">
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="showSection('intro')">🎯 Introduction</button>
+            <button class="tab-btn" onclick="showSection('simulator')">⚡ Simulateur</button>
+            <button class="tab-btn" onclick="showSection('differential')">🔄 Différentiel</button>
+            <button class="tab-btn" onclick="showSection('advantages')">✨ Avantages</button>
+            <button class="tab-btn" onclick="showSection('disadvantages')">⚠️ Inconvénients</button>
+            <button class="tab-btn" onclick="showSection('applications')">🚀 Applications</button>
+            <button class="tab-btn" onclick="showSection('comparison')">📊 Comparaisons</button>
+            <button class="tab-btn" onclick="showSection('history')">📜 Histoire</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Section Introduction -->
+        <div id="intro" class="content-section active">
+            <h2>🎯 Qu'est-ce que le Codage de Manchester ?</h2>
+            
+            <div class="info-grid">
+                <div class="info-card">
+                    <span class="card-icon">🔄</span>
+                    <h3>Principe de Base</h3>
+                    <p>Le codage de Manchester est une technique de modulation numérique où chaque bit est représenté par une transition de signal au milieu de la période du bit. Cette transition garantit une synchronisation continue entre l'émetteur et le récepteur.</p>
+                </div>
+
+                <div class="info-card">
+                    <span class="card-icon">📡</span>
+                    <h3>Auto-Synchronisation</h3>
+                    <p>Grâce aux transitions régulières, le récepteur peut extraire l'horloge directement du signal reçu, éliminant le besoin d'une ligne d'horloge séparée.</p>
+                </div>
+
+                <div class="info-card">
+                    <span class="card-icon">⚡</span>
+                    <h3>Variants Populaires</h3>
+                    <p>Il existe deux types principaux : Manchester classique (IEEE 802.3) et Manchester Différentiel, chacun avec ses avantages spécifiques.</p>
+                </div>
+            </div>
+
+            <h3>🧮 Formule Mathématique</h3>
+            <div class="code-display">
+Manchester Classique (IEEE 802.3):
+    bit = 0: Transition Haut → Bas au milieu
+    bit = 1: Transition Bas → Haut au milieu
+
+Manchester Différentiel:
+    bit = 0: Transition en début de période
+    bit = 1: Pas de transition en début de période
+    
+Débit effectif = Débit_symbole / 2
+Bande passante = 2 × Fréquence_bit
+            </div>
+
+            <h3>🎭 Représentation Visuelle</h3>
+            <p>Imaginez une danse électronique où chaque bit doit faire un pas (transition) exactement au milieu de sa performance. Cette chorégraphie garantit que personne ne perd le rythme !</p>
+        </div>
+
+        <!-- Section Simulateur Manchester Classique -->
+        <div id="simulator" class="content-section">
+            <h2>⚡ Simulateur Manchester Classique</h2>
+            
+            <div class="simulator-container">
+                <div class="input-section">
+                    <div class="input-group">
+                        <label for="binaryInput">Séquence Binaire :</label>
+                        <input type="text" id="binaryInput" placeholder="Exemple: 10110100" value="10110100">
+                    </div>
+                    <button class="encode-btn" onclick="encodeAndVisualize()">🚀 Encoder & Visualiser</button>
+                    <button class="demo-btn" onclick="runDemo()">🎬 Démo Auto</button>
+                </div>
+
+                <div class="visualization-area">
+                    <div>
+                        <h4 style="color: var(--neon-green); margin-bottom: 15px;">📊 Signal Original (NRZ)</h4>
+                        <canvas id="originalCanvas" class="wave-canvas" width="600" height="200"></canvas>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--neon-pink); margin-bottom: 15px;">🔄 Signal Manchester</h4>
+                        <canvas id="manchesterCanvas" class="wave-canvas" width="600" height="200"></canvas>
+                    </div>
+                </div>
+
+                <div id="encodingResult" style="margin-top: 20px; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 15px; border-left: 4px solid var(--neon-blue);">
+                    <h4 style="color: var(--neon-blue);">📋 Résultat de l'Encodage</h4>
+                    <p id="resultText">Entrez une séquence binaire pour voir l'encodage Manchester !</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Manchester Différentiel -->
+        <div id="differential" class="content-section">
+            <h2>🔄 Manchester Différentiel</h2>
+            
+            <div class="info-card" style="margin-bottom: 30px;">
+                <h3>💡 Principe du Manchester Différentiel</h3>
+                <p>Contrairement au Manchester classique, le Manchester Différentiel encode l'information non pas dans la polarité de la transition, mais dans la <strong>présence ou absence d'une transition au début de chaque période de bit</strong>.</p>
+                <br>
+                <ul style="line-height: 2; margin-left: 20px;">
+                    <li>🔴 <strong>Bit 0</strong> : Transition au DÉBUT de la période (changement de niveau)</li>
+                    <li>🟢 <strong>Bit 1</strong> : PAS de transition au début (maintien du niveau)</li>
+                    <li>⚡ <strong>Transition au milieu</strong> : Toujours présente (pour la synchronisation)</li>
+                </ul>
+                <br>
+                <p><strong>Avantage majeur :</strong> Insensible à la polarité du signal ! Même si on inverse les fils, les données restent correctes.</p>
+            </div>
+
+            <div class="simulator-container">
+                <div class="input-section">
+                    <div class="input-group">
+                        <label for="differentialInput">Séquence Binaire :</label>
+                        <input type="text" id="differentialInput" placeholder="Exemple: 01101" value="01101">
+                    </div>
+                    <button class="encode-btn" onclick="encodeDifferential()">🚀 Encoder en Différentiel</button>
+                    <button class="demo-btn" onclick="runDifferentialDemo()">🎬 Démo Différentiel</button>
+                </div>
+
+                <div class="visualization-area">
+                    <div>
+                        <h4 style="color: var(--neon-green); margin-bottom: 15px;">🔄 Manchester Classique</h4>
+                        <canvas id="classicCanvas" class="wave-canvas" width="600" height="200"></canvas>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--neon-purple); margin-bottom: 15px;">⚡ Manchester Différentiel</h4>
+                        <canvas id="differentialCanvas" class="wave-canvas" width="600" height="200"></canvas>
+                    </div>
+                </div>
+
+                <div id="differentialResult" style="margin-top: 20px; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 15px; border-left: 4px solid var(--neon-purple);">
+                    <h4 style="color: var(--neon-purple);">📋 Analyse du Différentiel</h4>
+                    <p id="diffResultText">Entrez une séquence pour comparer les deux encodages !</p>
+                </div>
+            </div>
+
+            <h3>📊 Comparaison Manchester vs Différentiel</h3>
+            <div class="comparison-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Caractéristique</th>
+                            <th>Manchester Classique</th>
+                            <th>Manchester Différentiel</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Encodage Bit 0</strong></td>
+                            <td>Haut → Bas</td>
+                            <td>Transition au début</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Encodage Bit 1</strong></td>
+                            <td>Bas → Haut</td>
+                            <td>Pas de transition au début</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Sensibilité polarité</strong></td>
+                            <td style="color: var(--neon-pink);">❌ Sensible</td>
+                            <td style="color: var(--neon-green);">✅ Insensible</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Détection erreurs</strong></td>
+                            <td>Bonne</td>
+                            <td>Excellente</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Complexité décodage</strong></td>
+                            <td>Moyenne</td>
+                            <td>Légèrement plus complexe</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Applications</strong></td>
+                            <td>Ethernet 10BASE-T, RFID</td>
+                            <td>Disques durs, Token Ring</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Section Avantages -->
+        <div id="advantages" class="content-section">
+            <h2>✨ Avantages du Codage Manchester</h2>
+            
+            <div class="info-grid">
+                <div class="info-card">
+                    <span class="card-icon">🎯</span>
+                    <h3>Auto-Synchronisation</h3>
+                    <p>Les transitions garantissent une récupération d'horloge fiable, éliminant les problèmes de désynchronisation même avec de longues séquences de bits identiques.</p>
+                </div>
+
+                <div class="info-card">
+                    <span class="card-icon">⚡</span>
+                    <h3>Pas de Composante Continue</h3>
+                    <p>Le signal alterné évite l'accumulation de charges DC, permettant l'utilisation de transformateurs et de condensateurs de couplage.</p>
+                </div>
+
+                <div class="info-card">
+                    <span class="card-icon">🛡️</span>
+                    <h3>Détection d'Erreurs</h3>
+                    <p>L'absence de transition au milieu d'un bit indique immédiatement une erreur de transmission, facilitant la détection de problèmes.</p>
+                </div>
+
+                <div class="info-card">
+                    <span class="card-icon">🔧</span>
+                    <h3>Simplicité de Mise en Œuvre</h3>
+                    <p>Les circuits d'encodage et de décodage sont relativement simples, utilisant des XOR et des bascules de base.</p>
+                </div>
+
+                <div class="info-card">
+                    <span class="card-icon">🔄</span>
+                    <h3>Robustesse (Différentiel)</h3>
+                    <p>Le Manchester Différentiel offre une insensibilité à la polarité, parfait pour les environnements où les connexions peuvent être inversées.</p>
+                </div>
+
+                <div class="info-card">
+                    <span class="card-icon">📡</span>
+                    <h3>Résistance aux Interférences</h3>
+                    <p>Les transitions régulières rendent le signal moins sensible aux dérives de phase et aux distorsions du canal.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Inconvénients -->
+        <div id="disadvantages" class="content-section">
+            <h2>⚠️ Inconvénients du Codage Manchester</h2>
+            
+            <div class="info-grid">
+                <div class="info-card">
+                    <span class="card-icon">📈</span>
+                    <h3>Bande Passante Doublée</h3>
+                    <p>Chaque bit nécessite une transition, doublant la fréquence de base et donc la bande passante requise par rapport au NRZ.</p>
+                </div>
+
+                <div class="info-card">
+                    <span class="card-icon">⚡</span>
+                    <h3>Consommation Énergétique</h3>
+                    <p>Les transitions constantes augmentent la consommation d'énergie, particulièrement problématique pour les appareils à batterie.</p>
+                </div>
+
+                <div class="info-card">
+                    <span class="card-icon">📉</span>
+                    <h3>Débit Effectif Réduit</h3>
+                    <p>Pour une même bande passante, le débit de données est divisé par deux comparé aux encodages plus efficaces.</p>
+                </div>
+
+                <div class="info-card">
+                    <span class="card-icon">🔧</span>
+                    <h3>Complexité du Récepteur</h3>
+                    <p>Bien que l'encodeur soit simple, le décodeur nécessite une PLL (Phase-Locked Loop) pour la récupération d'horloge.</p>
+                </div>
+            </div>
+
+            <h3>📊 Analyse Comparative des Coûts</h3>
+            <div class="comparison-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Métrique</th>
+                            <th>Manchester</th>
+                            <th>NRZ</th>
+                            <th>4B/5B</th>
+                            <th>Impact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Bande Passante</td>
+                            <td>2f</td>
+                            <td>f</td>
+                            <td>1.25f</td>
+                            <td style="color: var(--neon-pink);">-50% d'efficacité</td>
+                        </tr>
+                        <tr>
+                            <td>Consommation</td>
+                            <td>High</td>
+                            <td>Low</td>
+                            <td>Medium</td>
+                            <td style="color: var(--neon-pink);">+60% d'énergie</td>
+                        </tr>
+                        <tr>
+                            <td>Débit Effectif</td>
+                            <td>50%</td>
+                            <td>100%</td>
+                            <td>80%</td>
+                            <td style="color: var(--neon-pink);">-50% de débit</td>
+                        </tr>
+                        <tr>
+                            <td>Complexité Circuit</td>
+                            <td>Medium</td>
+                            <td>Low</td>
+                            <td>High</td>
+                            <td style="color: var(--neon-green);">Acceptable</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Section Applications -->
+        <div id="applications" class="content-section">
+            <h2>🚀 Applications Concrètes du Manchester</h2>
+            
+            <div class="applications-grid">
+                <div class="app-card">
+                    <span class="app-icon">🌐</span>
+                    <h4>Ethernet 10BASE-T</h4>
+                    <p>Standard IEEE 802.3 pour les réseaux locaux à 10 Mbps</p>
+                </div>
+                
+                <div class="app-card">
+                    <span class="app-icon">📡</span>
+                    <h4>RFID</h4>
+                    <p>Communication sans contact pour l'identification par radiofréquence</p>
+                </div>
+                
+                <div class="app-card">
+                    <span class="app-icon">📱</span>
+                    <h4>NFC</h4>
+                    <p>Near Field Communication pour les paiements mobiles</p>
+                </div>
+                
+                <div class="app-card">
+                    <span class="app-icon">🏠</span>
+                    <h4>Domotique IR</h4>
+                    <p>Télécommandes infrarouges et protocoles domestiques</p>
+                </div>
+                
+                <div class="app-card">
+                    <span class="app-icon">🔌</span>
+                    <h4>Power Line Communication</h4>
+                    <p>Transmission de données via le réseau électrique</p>
+                </div>
+                
+                <div class="app-card">
+                    <span class="app-icon">🛰️</span>
+                    <h4>Satellites</h4>
+                    <p>Communications spatiales longue distance</p>
+                </div>
+            </div>
+
+            <h3>🏭 Cas d'Étude : Ethernet 10BASE-T</h3>
+            <div class="info-card" style="margin: 30px 0;">
+                <h4 style="color: var(--neon-blue);">Spécifications Techniques</h4>
+                <div class="code-display">
+Standard: IEEE 802.3 (1983)
+Débit: 10 Mbps
+Fréquence: 20 MHz (Manchester differential)
+Portée: 100m (Cat3 UTP)
+Topologie: Étoile avec concentrateurs
+Connecteur: RJ45
+
+Avantages spécifiques:
+• Auto-synchronisation sur longues distances
+• Détection collision simplifiée (CSMA/CD)
+• Isolation galvanique par transformateurs
+• Coût réduit vs alternatives synchrones
+                </div>
+            </div>
+
+            <h3>📊 Répartition par Secteur d'Usage</h3>
+            <canvas id="applicationChart" width="600" height="400" style="background: rgba(0,0,0,0.3); border-radius: 15px; margin: 20px 0;"></canvas>
+        </div>
+
+        <!-- Section Comparaisons -->
+        <div id="comparison" class="content-section">
+            <h2>📊 Comparaisons avec Autres Codages</h2>
+            
+            <div class="comparison-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Codage</th>
+                            <th>Efficacité Spectrale</th>
+                            <th>Auto-Sync</th>
+                            <th>Complexité</th>
+                            <th>Usage Typique</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="background: rgba(0, 212, 255, 0.1);">
+                            <td><strong>Manchester</strong></td>
+                            <td>0.5 bit/Hz</td>
+                            <td>✅ Excellente</td>
+                            <td>🟡 Moyenne</td>
+                            <td>Ethernet, RFID</td>
+                        </tr>
+                        <tr style="background: rgba(168, 85, 247, 0.1);">
+                            <td><strong>Manchester Diff.</strong></td>
+                            <td>0.5 bit/Hz</td>
+                            <td>✅ Excellente</td>
+                            <td>🟡 Moyenne</td>
+                            <td>Token Ring, Disques</td>
+                        </tr>
+                        <tr>
+                            <td>NRZ</td>
+                            <td>1.0 bit/Hz</td>
+                            <td>❌ Aucune</td>
+                            <td>🟢 Faible</td>
+                            <td>RS232, USB</td>
+                        </tr>
+                        <tr>
+                            <td>4B/5B</td>
+                            <td>0.8 bit/Hz</td>
+                            <td>🟡 Partielle</td>
+                            <td>🔴 Élevée</td>
+                            <td>Fast Ethernet</td>
+                        </tr>
+                        <tr>
+                            <td>8B/10B</td>
+                            <td>0.8 bit/Hz</td>
+                            <td>✅ Excellente</td>
+                            <td>🔴 Élevée</td>
+                            <td>Fibre optique</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>🎯 Matrice de Décision</h3>
+            <div class="info-grid">
+                <div class="info-card">
+                    <span class="card-icon">✅</span>
+                    <h4>Choisir Manchester si:</h4>
+                    <ul style="margin-top: 15px; line-height: 1.8;">
+                        <li>• Synchronisation critique</li>
+                        <li>• Transmission longue distance</li>
+                        <li>• Isolation galvanique requise</li>
+                        <li>• Budget bande passante disponible</li>
+                        <li>• Détection d'erreurs simple</li>
+                    </ul>
+                </div>
+                
+                <div class="info-card">
+                    <span class="card-icon">🔄</span>
+                    <h4>Choisir Différentiel si:</h4>
+                    <ul style="margin-top: 15px; line-height: 1.8;">
+                        <li>• Insensibilité polarité nécessaire</li>
+                        <li>• Environnement bruité</li>
+                        <li>• Connexions non fiables</li>
+                        <li>• Applications industrielles</li>
+                        <li>• Stockage magnétique</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Histoire -->
+        <div id="history" class="content-section">
+            <h2>📜 Histoire et Évolution</h2>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h4 style="color: var(--neon-pink);">1948 - Université de Manchester</h4>
+                        <p>Première utilisation documentée du codage Manchester dans l'ordinateur Manchester Mark 1, développé par Freddie Williams et Tom Kilburn.</p>
+                    </div>
+                    <div class="timeline-dot"></div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h4 style="color: var(--neon-blue);">1975 - Standard IEEE 802.3</h4>
+                        <p>Adoption du Manchester différentiel pour le standard Ethernet, révolutionnant les réseaux locaux avec une synchronisation robuste.</p>
+                    </div>
+                    <div class="timeline-dot"></div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h4 style="color: var(--neon-green);">1983 - Commercialisation Ethernet</h4>
+                        <p>Lancement commercial d'Ethernet 10BASE-T utilisant Manchester, devenant le standard de facto des LAN d'entreprise.</p>
+                    </div>
+                    <div class="timeline-dot"></div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h4 style="color: var(--neon-pink);">1990s - Expansion RFID</h4>
+                        <p>Adoption massive dans les systèmes RFID pour sa robustesse dans les environnements industriels perturbés.</p>
+                    </div>
+                    <div class="timeline-dot"></div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h4 style="color: var(--neon-blue);">2003 - NFC et IoT</h4>
+                        <p>Intégration dans les standards NFC (ISO 14443) pour les communications de proximité et l'émergence de l'IoT.</p>
+                    </div>
+                    <div class="timeline-dot"></div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h4 style="color: var(--neon-green);">2020+ - Applications Modernes</h4>
+                        <p>Utilisation continue dans l'IoT, véhicules autonomes, et systèmes critiques nécessitant une synchronisation fiable.</p>
+                    </div>
+                    <div class="timeline-dot"></div>
+                </div>
+            </div>
+
+            <h3>🏆 Personnages Clés</h3>
+            <div class="info-grid">
+                <div class="info-card">
+                    <span class="card-icon">👨‍🔬</span>
+                    <h4>G.E. Thomas</h4>
+                    <p>Ingénieur qui formalisa le premier standard Manchester en 1949, établissant les conventions de polarité originales encore utilisées aujourd'hui.</p>
+                </div>
+                
+                <div class="info-card">
+                    <span class="card-icon">👨‍💻</span>
+                    <h4>Bob Metcalfe</h4>
+                    <p>Inventeur d'Ethernet qui choisit Manchester pour sa robustesse, créant les fondements des réseaux modernes.</p>
+                </div>
+                
+                <div class="info-card">
+                    <span class="card-icon">🏛️</span>
+                    <h4>IEEE 802.3 Committee</h4>
+                    <p>Comité qui standardisa Manchester différentiel, assurant l'interopérabilité mondiale des équipements réseau.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let isAnimating = false;
+        let particles = [];
+        let particleInterval = null;
+        const MAX_PARTICLES = 15; // Limite le nombre de particules
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            initializeCharts();
+            setupScrollIndicator();
+            setTimeout(() => {
+                document.querySelector('header').style.animation = 'fadeInUp 1s ease';
+            }, 100);
+        });
+
+        // Gestion des onglets
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                if (section.classList.contains('active')) {
+                    section.style.opacity = '0';
+                    section.style.transform = 'translateY(-20px)';
+                    setTimeout(() => {
+                        section.classList.remove('active');
+                    }, 300);
+                }
+            });
+
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            setTimeout(() => {
+                const targetSection = document.getElementById(sectionId);
+                targetSection.classList.add('active');
+                targetSection.style.opacity = '0';
+                targetSection.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    targetSection.style.opacity = '1';
+                    targetSection.style.transform = 'translateY(0)';
+                }, 50);
+            }, 300);
+
+            if (sectionId === 'simulator') {
+                setTimeout(() => {
+                    initializeCanvases();
+                }, 400);
+            } else if (sectionId === 'differential') {
+                setTimeout(() => {
+                    encodeDifferential();
+                }, 400);
+            } else if (sectionId === 'applications') {
+                setTimeout(() => {
+                    drawApplicationChart();
+                }, 400);
+            }
+        }
+
+        // ============ SIMULATEUR MANCHESTER CLASSIQUE ============
+        function encodeAndVisualize() {
+            const input = document.getElementById('binaryInput').value.replace(/[^01]/g, '');
+            if (!input) {
+                alert('🚨 Veuillez entrer une séquence binaire valide (0 et 1 uniquement)');
+                return;
+            }
+
+            document.getElementById('binaryInput').value = input;
+            animateEncoding(input);
+            displayEncodingResult(input);
+            drawOriginalSignal(input);
+            drawManchesterSignal(input);
+        }
+
+        function animateEncoding(binaryString) {
+            const resultDiv = document.getElementById('encodingResult');
+            resultDiv.style.transform = 'scale(0.9)';
+            resultDiv.style.opacity = '0.5';
+            
+            setTimeout(() => {
+                resultDiv.style.transform = 'scale(1.05)';
+                resultDiv.style.opacity = '1';
+                setTimeout(() => {
+                    resultDiv.style.transform = 'scale(1)';
+                }, 200);
+            }, 100);
+        }
+
+        function displayEncodingResult(binaryString) {
+            let result = `
+                <h4 style="color: var(--neon-blue);">📋 Résultat de l'Encodage Manchester</h4>
+                <p><strong>🔢 Données originales:</strong> ${binaryString}</p>
+                <p><strong>⚡ Longueur:</strong> ${binaryString.length} bits</p>
+                <p><strong>🔄 Transitions requises:</strong> ${binaryString.length} (une par bit au milieu)</p>
+                <p><strong>📊 Bande passante:</strong> ${binaryString.length * 2} Hz (pour 1 Hz de données)</p>
+            `;
+            
+            result += '<p><strong>🎯 Encodage Manchester IEEE 802.3:</strong></p><ul style="margin-left: 20px; margin-top: 10px;">';
+            for (let i = 0; i < binaryString.length; i++) {
+                const bit = binaryString[i];
+                const transition = bit === '1' ? 'Bas → Haut ⬆️' : 'Haut → Bas ⬇️';
+                result += `<li>Bit ${i + 1}: "${bit}" = ${transition} (au milieu)</li>`;
+            }
+            result += '</ul>';
+
+            document.getElementById('resultText').innerHTML = result;
+        }
+
+        function drawOriginalSignal(binaryString) {
+            const canvas = document.getElementById('originalCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#8ac926';
+            
+            drawGrid(ctx, canvas, '#8ac926');
+            
+            const bitWidth = canvas.width / binaryString.length;
+            
+            ctx.beginPath();
+            let currentY = binaryString[0] === '1' ? 50 : 150;
+            ctx.moveTo(0, currentY);
+            
+            for (let i = 0; i < binaryString.length; i++) {
+                const x = i * bitWidth;
+                const nextX = (i + 1) * bitWidth;
+                const y = binaryString[i] === '1' ? 50 : 150;
+                
+                ctx.lineTo(nextX, y);
+                
+                if (i < binaryString.length - 1) {
+                    const nextY = binaryString[i + 1] === '1' ? 50 : 150;
+                    if (y !== nextY) {
+                        ctx.lineTo(nextX, nextY);
+                    }
+                }
+            }
+            
+            ctx.stroke();
+            
+            ctx.fillStyle = '#8ac926';
+            ctx.font = '16px Poppins';
+            ctx.textAlign = 'center';
+            for (let i = 0; i < binaryString.length; i++) {
+                const x = i * bitWidth + bitWidth / 2;
+                ctx.fillText(binaryString[i], x, 30);
+            }
+        }
+
+        function drawManchesterSignal(binaryString) {
+            const canvas = document.getElementById('manchesterCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#ff006e';
+            
+            drawGrid(ctx, canvas, '#ff006e');
+            
+            const bitWidth = canvas.width / binaryString.length;
+            
+            ctx.beginPath();
+            let currentY = binaryString[0] === '1' ? 150 : 50;
+            ctx.moveTo(0, currentY);
+            
+            for (let i = 0; i < binaryString.length; i++) {
+                const startX = i * bitWidth;
+                const midX = startX + bitWidth / 2;
+                const endX = (i + 1) * bitWidth;
+                
+                if (binaryString[i] === '1') {
+                    // Bit 1: Bas → Haut (IEEE 802.3)
+                    if (currentY !== 150) {
+                        ctx.lineTo(startX, 150);
+                    }
+                    ctx.lineTo(midX, 150);
+                    ctx.lineTo(midX, 50);
+                    ctx.lineTo(endX, 50);
+                    currentY = 50;
+                } else {
+                    // Bit 0: Haut → Bas (IEEE 802.3)
+                    if (currentY !== 50) {
+                        ctx.lineTo(startX, 50);
+                    }
+                    ctx.lineTo(midX, 50);
+                    ctx.lineTo(midX, 150);
+                    ctx.lineTo(endX, 150);
+                    currentY = 150;
+                }
+            }
+            
+            ctx.stroke();
+            
+            // Marquer les transitions
+            ctx.fillStyle = '#ff006e';
+            ctx.font = '12px Poppins';
+            ctx.textAlign = 'center';
+            for (let i = 0; i < binaryString.length; i++) {
+                const midX = i * bitWidth + bitWidth / 2;
+                ctx.beginPath();
+                ctx.arc(midX, 100, 5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillText('↕', midX, 185);
+            }
+        }
+
+        function drawGrid(ctx, canvas, color) {
+            ctx.strokeStyle = color + '30';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([2, 2]);
+            
+            for (let y = 50; y <= 150; y += 50) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+            
+            ctx.beginPath();
+            ctx.moveTo(0, 100);
+            ctx.lineTo(canvas.width, 100);
+            ctx.stroke();
+            
+            ctx.setLineDash([]);
+        }
+
+        function runDemo() {
+            const demoSequences = ['10101010', '11001100', '10110100', '11110000', '01010101'];
+            let currentDemo = 0;
+            
+            const interval = setInterval(() => {
+                if (currentDemo >= demoSequences.length) {
+                    clearInterval(interval);
+                    return;
+                }
+                
+                document.getElementById('binaryInput').value = demoSequences[currentDemo];
+                encodeAndVisualize();
+                
+                const input = document.getElementById('binaryInput');
+                input.style.background = 'linear-gradient(45deg, var(--neon-blue), var(--neon-pink))';
+                setTimeout(() => {
+                    input.style.background = 'rgba(255, 255, 255, 0.1)';
+                }, 1000);
+                
+                currentDemo++;
+            }, 2500);
+        }
+
+        function initializeCanvases() {
+            const defaultInput = '10110100';
+            document.getElementById('binaryInput').value = defaultInput;
+            encodeAndVisualize();
+        }
+
+        // ============ SIMULATEUR MANCHESTER DIFFÉRENTIEL ============
+        function encodeDifferential() {
+            const input = document.getElementById('differentialInput').value.replace(/[^01]/g, '');
+            if (!input) {
+                alert('🚨 Veuillez entrer une séquence binaire valide');
+                return;
+            }
+
+            document.getElementById('differentialInput').value = input;
+            drawClassicManchester(input);
+            drawDifferentialManchester(input);
+            displayDifferentialResult(input);
+        }
+
+        function drawClassicManchester(binaryString) {
+            const canvas = document.getElementById('classicCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#8ac926';
+            
+            drawGrid(ctx, canvas, '#8ac926');
+            
+            const bitWidth = canvas.width / binaryString.length;
+            
+            ctx.beginPath();
+            let currentY = binaryString[0] === '1' ? 150 : 50;
+            ctx.moveTo(0, currentY);
+            
+            for (let i = 0; i < binaryString.length; i++) {
+                const startX = i * bitWidth;
+                const midX = startX + bitWidth / 2;
+                const endX = (i + 1) * bitWidth;
+                
+                if (binaryString[i] === '1') {
+                    if (currentY !== 150) ctx.lineTo(startX, 150);
+                    ctx.lineTo(midX, 150);
+                    ctx.lineTo(midX, 50);
+                    ctx.lineTo(endX, 50);
+                    currentY = 50;
+                } else {
+                    if (currentY !== 50) ctx.lineTo(startX, 50);
+                    ctx.lineTo(midX, 50);
+                    ctx.lineTo(midX, 150);
+                    ctx.lineTo(endX, 150);
+                    currentY = 150;
+                }
+            }
+            
+            ctx.stroke();
+        }
+
+        function drawDifferentialManchester(binaryString) {
+            const canvas = document.getElementById('differentialCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#a855f7';
+            
+            drawGrid(ctx, canvas, '#a855f7');
+            
+            const bitWidth = canvas.width / binaryString.length;
+            
+            ctx.beginPath();
+            let currentLevel = 150; // Commencer bas
+            ctx.moveTo(0, currentLevel);
+            
+            for (let i = 0; i < binaryString.length; i++) {
+                const startX = i * bitWidth;
+                const midX = startX + bitWidth / 2;
+                const endX = (i + 1) * bitWidth;
+                
+                if (binaryString[i] === '0') {
+                    // Bit 0: Transition au début
+                    currentLevel = currentLevel === 50 ? 150 : 50;
+                    ctx.lineTo(startX, currentLevel);
+                }
+                // Sinon bit 1: pas de transition au début, on reste au même niveau
+                
+                // Transition au milieu (toujours présente)
+                ctx.lineTo(midX, currentLevel);
+                const nextLevel = currentLevel === 50 ? 150 : 50;
+                ctx.lineTo(midX, nextLevel);
+                ctx.lineTo(endX, nextLevel);
+                currentLevel = nextLevel;
+            }
+            
+            ctx.stroke();
+            
+            // Annotations
+            ctx.fillStyle = '#a855f7';
+            ctx.font = '12px Poppins';
+            ctx.textAlign = 'center';
+            for (let i = 0; i < binaryString.length; i++) {
+                const startX = i * bitWidth;
+                const midX = startX + bitWidth / 2;
+                
+                // Marquer transition début (bit 0)
+                if (binaryString[i] === '0') {
+                    ctx.beginPath();
+                    ctx.arc(startX, 100, 6, 0, Math.PI * 2);
+                    ctx.fillStyle = '#ff006e';
+                    ctx.fill();
+                    ctx.fillStyle = '#a855f7';
+                }
+                
+                // Transition milieu
+                ctx.fillText('↕', midX, 185);
+            }
+        }
+
+        function displayDifferentialResult(binaryString) {
+            let result = `
+                <h4 style="color: var(--neon-purple);">📋 Analyse Comparative</h4>
+                <p><strong>🔢 Séquence:</strong> ${binaryString}</p>
+                <p><strong>⚡ Longueur:</strong> ${binaryString.length} bits</p>
+                <br>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: rgba(168, 85, 247, 0.2);">
+                            <th style="padding: 10px; text-align: left;">Bit</th>
+                            <th style="padding: 10px; text-align: left;">Valeur</th>
+                            <th style="padding: 10px; text-align: left;">Manchester Classique</th>
+                            <th style="padding: 10px; text-align: left;">Manchester Différentiel</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            for (let i = 0; i < binaryString.length; i++) {
+                const bit = binaryString[i];
+                const classic = bit === '1' ? 'Bas→Haut (milieu)' : 'Haut→Bas (milieu)';
+                const diff = bit === '0' ? 'Transition DÉBUT + milieu' : 'PAS de transition début, milieu seulement';
+                
+                result += `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <td style="padding: 10px;">#${i + 1}</td>
+                        <td style="padding: 10px; font-weight: bold; color: ${bit === '1' ? 'var(--neon-green)' : 'var(--neon-pink)'};">${bit}</td>
+                        <td style="padding: 10px;">${classic}</td>
+                        <td style="padding: 10px; color: var(--neon-purple);">${diff}</td>
+                    </tr>
+                `;
+            }
+            
+            result += `
+                    </tbody>
+                </table>
+                <br>
+                <p><strong>💡 Différence clé:</strong> Le différentiel encode dans la <span style="color: var(--neon-purple);">présence/absence de transition au début</span>, pas dans la polarité!</p>
+            `;
+
+            document.getElementById('diffResultText').innerHTML = result;
+        }
+
+        function runDifferentialDemo() {
+            const demoSequences = ['01101', '11100', '00111', '10101', '11001'];
+            let currentDemo = 0;
+            
+            const interval = setInterval(() => {
+                if (currentDemo >= demoSequences.length) {
+                    clearInterval(interval);
+                    return;
+                }
+                
+                document.getElementById('differentialInput').value = demoSequences[currentDemo];
+                encodeDifferential();
+                
+                const input = document.getElementById('differentialInput');
+                input.style.background = 'linear-gradient(45deg, var(--neon-purple), var(--neon-blue))';
+                setTimeout(() => {
+                    input.style.background = 'rgba(255, 255, 255, 0.1)';
+                }, 1000);
+                
+                currentDemo++;
+            }, 3000);
+        }
+
+        // ============ FONCTIONNALITÉS AVANCÉES ============
+        
+        // Graphiques
+        function initializeCharts() {
+            setTimeout(() => {
+                drawApplicationChart();
+            }, 1000);
+        }
+
+        function drawApplicationChart() {
+            const canvas = document.getElementById('applicationChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const data = [
+                { label: 'Ethernet/LAN', value: 35, color: '#667eea' },
+                { label: 'RFID/NFC', value: 25, color: '#764ba2' },
+                { label: 'IoT Devices', value: 20, color: '#8ac926' },
+                { label: 'Telecom', value: 15, color: '#ff006e' },
+                { label: 'Autres', value: 5, color: '#00d4ff' }
+            ];
+            
+            let startAngle = 0;
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = 120;
+            
+            data.forEach((item, index) => {
+                const sliceAngle = (item.value / 100) * Math.PI * 2;
+                
+                // Secteur
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle);
+                ctx.lineTo(centerX, centerY);
+                ctx.fillStyle = item.color;
+                ctx.fill();
+                
+                // Label
+                const labelAngle = startAngle + sliceAngle / 2;
+                const labelX = centerX + Math.cos(labelAngle) * (radius + 30);
+                const labelY = centerY + Math.sin(labelAngle) * (radius + 30);
+                
+                ctx.fillStyle = 'white';
+                ctx.font = '14px Poppins';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${item.label} (${item.value}%)`, labelX, labelY);
+                
+                startAngle += sliceAngle;
+            });
+        }
+
+        // Particules flottantes - CORRIGÉ
+        function createParticles() {
+            // Nettoyer les anciennes particules si elles existent
+            const existingParticles = document.querySelectorAll('.particle');
+            existingParticles.forEach(p => p.remove());
+            
+            // Arrêter l'intervalle précédent s'il existe
+            if (particleInterval) {
+                clearInterval(particleInterval);
+            }
+            
+            // Créer un nombre limité de particules
+            for (let i = 0; i < MAX_PARTICLES; i++) {
+                setTimeout(() => {
+                    createSingleParticle();
+                }, i * 200);
+            }
+            
+            // Redémarrer l'intervalle avec un délai plus long
+            particleInterval = setInterval(() => {
+                // Vérifier le nombre actuel de particules
+                const currentParticles = document.querySelectorAll('.particle').length;
+                
+                // Ne créer que si nous sommes en dessous du maximum
+                if (currentParticles < MAX_PARTICLES) {
+                    createSingleParticle();
+                }
+            }, 5000); // Intervalle plus long pour éviter la surpopulation
+        }
+
+        function createSingleParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.top = Math.random() * 100 + 'vh';
+            particle.style.width = (Math.random() * 6 + 2) + 'px';
+            particle.style.height = particle.style.width;
+            particle.style.background = ['#667eea', '#764ba2', '#00d4ff', '#ff006e'][Math.floor(Math.random() * 4)];
+            particle.style.opacity = '0.3'; // Opacité réduite
+            document.body.appendChild(particle);
+            
+            // Supprimer après animation
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.remove();
+                }
+            }, 8000);
+        }
+
+        // Indicateur de scroll
+        function setupScrollIndicator() {
+            window.addEventListener('scroll', () => {
+                const scrolled = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+                document.getElementById('scrollProgress').style.width = scrolled + '%';
+            });
+        }
+
+        // Easter egg - Konami Code
+        let konamiCode = [];
+        const konami = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
+        
+        document.addEventListener('keydown', (e) => {
+            konamiCode.push(e.keyCode);
+            if (konamiCode.length > konami.length) {
+                konamiCode.shift();
+            }
+            
+            if (JSON.stringify(konamiCode) === JSON.stringify(konami)) {
+                activateEasterEgg();
+            }
+        });
+
+        function activateEasterEgg() {
+            const matrix = document.createElement('div');
+            matrix.style.position = 'fixed';
+            matrix.style.top = '0';
+            matrix.style.left = '0';
+            matrix.style.width = '100%';
+            matrix.style.height = '100%';
+            matrix.style.background = 'rgba(0, 0, 0, 0.9)';
+            matrix.style.zIndex = '10000';
+            matrix.style.color = '#00ff00';
+            matrix.style.fontFamily = 'monospace';
+            matrix.style.fontSize = '14px';
+            matrix.innerHTML = '<div style="text-align: center; padding-top: 40vh; font-size: 24px;">🎉 MANCHESTER MASTER MODE ACTIVÉ! 🎉<br/>Tous les secrets du codage sont révélés!</div>';
+            
+            document.body.appendChild(matrix);
+            
+            setTimeout(() => {
+                matrix.remove();
+                document.body.style.filter = 'hue-rotate(45deg) brightness(1.2)';
+                setTimeout(() => {
+                    document.body.style.filter = '';
+                }, 3000);
+            }, 3000);
+        }
+
+        // Raccourcis clavier
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case '1': showSectionByName('intro'); e.preventDefault(); break;
+                    case '2': showSectionByName('simulator'); e.preventDefault(); break;
+                    case '3': showSectionByName('differential'); e.preventDefault(); break;
+                    case '4': showSectionByName('advantages'); e.preventDefault(); break;
+                    case '5': showSectionByName('disadvantages'); e.preventDefault(); break;
+                    case '6': showSectionByName('applications'); e.preventDefault(); break;
+                    case '7': showSectionByName('comparison'); e.preventDefault(); break;
+                    case '8': showSectionByName('history'); e.preventDefault(); break;
+                }
+            }
+            
+            if (e.key === 'Escape') {
+                showSectionByName('intro');
+            }
+        });
+
+        function showSectionByName(sectionName) {
+            const button = document.querySelector(`[onclick="showSection('${sectionName}')"]`);
+            if (button) {
+                button.click();
+            }
+        }
+
+        // Mode sombre/clair
+        let isDarkMode = true;
+        
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            document.body.style.filter = isDarkMode ? '' : 'invert(1) hue-rotate(180deg)';
+        }
+
+        // Double clic pour changer de thème
+        document.addEventListener('dblclick', (e) => {
+            if (e.target.tagName === 'BODY' || e.target.classList.contains('bg-animation')) {
+                toggleTheme();
+            }
+        });
+
+        // Initialisation finale
+        window.addEventListener('load', () => {
+            console.log(`
+🎉 Site Manchester Encoding COMPLET chargé avec succès!
+📚 Raccourcis disponibles:
+• Ctrl/Cmd + 1-8: Navigation entre sections
+• Escape: Retour à l'introduction  
+• Double-clic: Changer de thème
+• Konami Code: Mode secret 😉
+
+💡 Version CORRIGÉE - Les particules sont maintenant contrôlées!
+            `);
+        });
+    </script>
+</body>
+</html>
